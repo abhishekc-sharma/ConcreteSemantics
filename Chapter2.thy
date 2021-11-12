@@ -147,4 +147,38 @@ theorem itadd_eq_add : "itadd m n = m + n"
   apply(auto)
 done
 
+(* Exercise 2.10 *)
+
+datatype tree0 = Tip | Node tree0 tree0
+
+fun explode :: "nat \<Rightarrow> tree0 \<Rightarrow> tree0" where
+  "explode 0 t = t" |
+  "explode (Suc n) t = explode n (Node t t)"
+
+fun nodes :: "tree0 \<Rightarrow> nat" where
+  "nodes Tip = 1" |
+  "nodes (Node l r) = 1 + (nodes l) + (nodes r)"
+
+theorem nodes_explode : "nodes (explode n t) = 2^n * (1 + nodes t) - 1"
+  apply(induction n arbitrary: t)
+  apply(auto simp add: algebra_simps)
+done
+
+(* Exercise 2.11 *)
+
+datatype exp = Var | Const int | Add exp exp | Mult exp exp
+
+fun eval :: "exp \<Rightarrow> int \<Rightarrow> int" where
+"eval Var x = x" |
+"eval (Const n) _ = n" |
+"eval (Add e1 e2) x = (eval e1 x) + (eval e2 x)" |
+"eval (Mult e1 e2) x = (eval e1 x) + (eval e2 x)"
+
+fun evalp' :: "int list \<Rightarrow> int \<Rightarrow> nat \<Rightarrow> int" where
+"evalp' [] value order  = 0" |
+"evalp' (p#ps) value order = p * (value ^ order) + evalp' ps value (order + 1)"
+
+fun evalp :: "int list \<Rightarrow> int \<Rightarrow> int" where
+"evalp polynomial value  = evalp' polynomial value 0"
+
 end
